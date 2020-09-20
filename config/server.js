@@ -1,5 +1,5 @@
-import express from "express";
-import bodyParser from "body-parser";
+const express = require('express');
+const bodyParser = require("body-parser");
 const server = express();
 const cors = require('cors'); 
 const router = require('../src/routes');
@@ -40,4 +40,4 @@ server.use((e, req, res, next) => {
 
 server.use(bodyParser.json());
 
-export default server;
+module.exports = server;

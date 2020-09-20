@@ -1,6 +1,6 @@
-const org = {};
-import mongoose from "mongoose";
+const mongoose = require('mongoose')
 
+const org = {};
 
 org.getAll = async( req,res,next) => {
     try{
