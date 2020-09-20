@@ -1,0 +1,29 @@
+{
+  "name": "consumer_doorcart",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "babel-node index.js",
+    "dev:start": "nodemon --exec babel-node index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "mongoose": "^5.10.6",
+    "mongoose-unique-validator": "^2.0.3",
+    "slugify": "^1.4.5"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.11.6",
+    "@babel/node": "^7.10.5",
+    "@babel/preset-env": "^7.11.5",
+    "babel-loader": "^8.1.0",
+    "nodemon": "^2.0.4"
+  }
+}
