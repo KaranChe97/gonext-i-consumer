@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
-
+const categoryService = require('../models/categories');
+const inventoryService = require('../models/inventory');
 const org = {};
 
 
@@ -36,17 +37,17 @@ org.getStore = async (req, res, next) => {
         if(!companyId) {
             throw new Error('Company Id is not passed');
         }
-        const admins = DB.collection('admins');
-        const inventory = DB.collection('inventories');
+        const Admins = DB.collection('admins')
         var id = mongoose.Types.ObjectId(companyId);
         const requiredFields = {
             "company": 1, 
             "address": 1, 
-            "phonenumber": 1, 
+            "phonenumber": 1,  
             "profilePic": 1,
             "companyId": 1
-        }
-        const adminDetails = await admins.find({ _id:id}, requiredFields).project(requiredFields).toArray();
+        } 
+
+        const adminDetails = await Admins.find({ _id:id}, requiredFields).project(requiredFields).toArray();
 
         if(!adminDetails.length) {
             return res.json({
@@ -55,7 +56,8 @@ org.getStore = async (req, res, next) => {
             })
         }
 
-        const products = await inventory.find({ "organizationID": companyId }).toArray();
+        const products = await inventoryService.getAll(companyId);
+        const categories = await categoryService.getAll({"orgId": id});
 
         if(adminDetails) {
             storeDetails = adminDetails[0];
@@ -65,7 +67,8 @@ org.getStore = async (req, res, next) => {
             status: 1,
             message: "success",
             storeDetails,
-            products
+            products,
+            categories
         })
     } catch(e) {
         next(e);
