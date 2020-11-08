@@ -1,21 +1,13 @@
 const mongoose = require('mongoose')
 const categoryService = require('../models/categories');
 const inventoryService = require('../models/inventory');
+const Admins = require('../models/admin/index');
 const org = {};
 
 
 org.getAll = async (req,res,next) => {
-    try{
-        const DB = await mongoose.connection.db;
-        const admins = DB.collection('admins');
-        const requiredFields = {
-            "company": 1, 
-            "address": 1, 
-            "phonenumber": 1, 
-            "profilePic": 1 ,
-            "companyId": 1
-        }
-        let listOfOrg = await admins.find({ role: 'admin' }).project(requiredFields).toArray();
+    try{     
+        let listOfOrg = await Admins.find({ role: 'admin' }, "company address phonenumber profilePic companyId");
         if(listOfOrg && listOfOrg.length) {
             res.status(200).json({
                 status: 1,
@@ -31,25 +23,15 @@ org.getAll = async (req,res,next) => {
 
 org.getStore = async (req, res, next) => {
     try {
-        const DB = await mongoose.connection.db;
         const { companyId } = req.params; 
-        let storeDetails;
         if(!companyId) {
             throw new Error('Company Id is not passed');
         }
-        const Admins = DB.collection('admins')
         var id = mongoose.Types.ObjectId(companyId);
-        const requiredFields = {
-            "company": 1, 
-            "address": 1, 
-            "phonenumber": 1,  
-            "profilePic": 1,
-            "companyId": 1
-        } 
 
-        const adminDetails = await Admins.find({ _id:id}, requiredFields).project(requiredFields).toArray();
+        const storeDetails = await Admins.findOne({ _id:id }, "company address phonenumber profilePic companyId");
 
-        if(!adminDetails.length) {
+        if(!storeDetails) {
             return res.json({
                 status: 2,
                 message: 'Cannot find store'
@@ -58,11 +40,7 @@ org.getStore = async (req, res, next) => {
 
         const products = await inventoryService.getAll(companyId);
         const categories = await categoryService.getAll({"orgId": id});
-
-        if(adminDetails) {
-            storeDetails = adminDetails[0];
-        }
-
+        
         return res.json({
             status: 1,
             message: "success",
@@ -74,7 +52,7 @@ org.getStore = async (req, res, next) => {
         next(e);
     }
 
-}
+} 
 
 
 module.exports = org;
